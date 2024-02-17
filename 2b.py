@@ -43,18 +43,9 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
         rank = torch.distributed.get_rank()
         
         for _, param in enumerate(model.parameters()):
-            tensor_to_gather = param.grad
-            
-            gathered_tensors = [torch.zeros_like(tensor_to_gather) for i in range(world_size)]
-            torch.distributed.gather(tensor_to_gather, gather_list=gathered_tensors if rank == 0 else None, 
-                                    dst=0, group=None, async_op=False)
-            
-            average_grad = torch.stack(gathered_tensors).mean(dim=0)
-            output_tensor = torch.zeros_like(average_grad)
-            torch.distributed.scatter(output_tensor, scatter_list=[average_grad for _ in range(world_size)] if rank == 0 else None, 
-                                    src=0, group=None, async_op=False)
-            
-            param.grad = output_tensor
+            gradient_sum = param.grad
+            torch.distributed.all_reduce(gradient_sum, op=torch.distributed.ReduceOp.SUM, group=None, async_op=False)            
+            param.grad = gradient_sum / world_size
         
         optimizer.step()
         
