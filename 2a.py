@@ -52,7 +52,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
             
             average_grad = torch.stack(gathered_tensors).mean(dim=0)
             output_tensor = torch.zeros_like(average_grad)
-            torch.distributed.scatter(output_tensor, scatter_list=[average_grad for _ in range(world_size)], 
+            torch.distributed.scatter(output_tensor, scatter_list=[average_grad for _ in range(world_size)] if rank == 0 else None, 
                                     src=0, group=None, async_op=False)
             if rank != 0: print("Scattered tensors")
             
