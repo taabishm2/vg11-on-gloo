@@ -58,7 +58,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
 def test_model(model, test_loader, criterion):
     
     #print hash of final parameters
-    print("Hash of final parameters: ", hash(str(model.parameters())))
+    print("Hash of final parameters: ", model.parameters())
     
     model.eval()
     test_loss = 0
