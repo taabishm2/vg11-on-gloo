@@ -25,8 +25,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     criterion (nn.CrossEntropyLoss) : Loss function used to train the network
     epoch (int): Current epoch number
     """
-    model = DDP(module, device_ids=None, output_device=None, dim=0, broadcast_buffers=True, process_group=None, bucket_cap_mb=25, find_unused_parameters=False, check_reduction=False, gradient_as_bucket_view=False, static_graph=False, delay_all_reduce_named_params=None, param_to_hook_all_reduce=None, mixed_precision=None)
-
+    model = DDP(model)
     running_loss = total_loss = 0.0
 
     # remember to exit the train loop at end of the epoch
@@ -41,15 +40,6 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
         outputs = model(inputs)
         loss = criterion(outputs, labels)
         loss.backward()
-        
-        world_size = torch.distributed.get_world_size()
-        rank = torch.distributed.get_rank()
-        
-        for _, param in enumerate(model.parameters()):
-            gradient_sum = param.grad
-            torch.distributed.all_reduce(gradient_sum, op=torch.distributed.ReduceOp.SUM, group=None, async_op=False)            
-            param.grad = gradient_sum / world_size
-        
         optimizer.step()
         
         # print statistics
