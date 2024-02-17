@@ -56,10 +56,12 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     return None
 
 def test_model(model, test_loader, criterion):
-    
-    #print hash of final parameters
-    print("Hash of final parameters: ", model.parameters())
-    
+    params = {}
+    for name, param in model.named_parameters():
+        params[name] = param.tolist()
+    with open('params.json', 'w') as f:
+        json.dump(params, f)
+        
     model.eval()
     test_loss = 0
     correct = 0
