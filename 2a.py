@@ -44,7 +44,9 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
         
         for _, param in enumerate(model.parameters()):
             tensor_to_gather = param.grad
-            gathered_tensors = [torch.zeros_like(tensor_to_gather) for i in range(world_size) if i != 0 else None]
+            
+            gathered_tensors = [torch.zeros_like(tensor_to_gather) for i in range(world_size)]
+            gathered_tensors[0] = None # rank 0 will not gather its own tensor
             torch.distributed.gather(tensor_to_gather, gather_list=gathered_tensors, 
                                     dst=0, group=None, async_op=False)
             if rank == 0: print("Gathered tensors")
