@@ -72,6 +72,10 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     return None
 
 def test_model(model, test_loader, criterion):
+    
+    #print hash of final parameters
+    print("Hash of final parameters: ", hash(str(model.parameters())))
+    
     model.eval()
     test_loss = 0
     correct = 0
@@ -120,7 +124,7 @@ def main():
     training_set = datasets.CIFAR10(root="./data", train=True,
                                                 download=True, transform=transform_train)
 
-    sampler = torch.utils.data.distributed.DistributedSampler(training_set, num_replicas=4, rank=0, 
+    sampler = torch.utils.data.distributed.DistributedSampler(training_set, num_replicas=4, rank=rank, 
                                                               shuffle=True, seed=744, drop_last=False)
 
     # num_workers refers to the number of workers to use for data loading
