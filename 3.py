@@ -11,6 +11,8 @@ import logging
 import random
 import model as mdl
 import argparse
+from measure import *
+
 device = "cpu"
 torch.set_num_threads(4)
 
@@ -30,6 +32,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
 
     # remember to exit the train loop at end of the epoch
     for batch_idx, (data, target) in enumerate(train_loader):
+        t1 = time.time()
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data, target
 
@@ -42,14 +45,10 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
         loss.backward()
         optimizer.step()
         
-        # print statistics
-        running_loss += loss.item()
         total_loss += loss.item()
-        if batch_idx % 20 == 19:
-            print("")
-            print(f'[Batch:{batch_idx+1}] avg running loss: \t\t{running_loss/20}')
-            print(f'[Batch:{batch_idx+1}] avg total loss: \t\t {total_loss/(batch_idx+1)}')
-            running_loss = 0.0
+        measure_iters(source="DDP", iter=batch_idx, start_time=t1, 
+                iter_loss=loss.item(), total_loss=total_loss/(batch_idx+1), 
+                batch_size=inputs.size(0), sync_time=0)
 
     print('Finished Training')
 

@@ -11,6 +11,8 @@ import logging
 import random
 import model as mdl
 import argparse
+from measure import *
+
 device = "cpu"
 torch.set_num_threads(4)
 
@@ -28,6 +30,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
 
     # remember to exit the train loop at end of the epoch
     for batch_idx, (data, target) in enumerate(train_loader):
+        t1 = time.time()
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data, target
 
@@ -42,30 +45,32 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
         world_size = torch.distributed.get_world_size()
         rank = torch.distributed.get_rank()
         
+        sync_time = 0
         for _, param in enumerate(model.parameters()):
             tensor_to_gather = param.grad
             
             gathered_tensors = [torch.zeros_like(tensor_to_gather) for i in range(world_size)]
+            s_t1 = time.time()
             torch.distributed.gather(tensor_to_gather, gather_list=gathered_tensors if rank == 0 else None, 
                                     dst=0, group=None, async_op=False)
+            sync_time += time.time() - s_t1
             
             average_grad = torch.stack(gathered_tensors).mean(dim=0)
+            
+            s_t1 = time.time()
             output_tensor = torch.zeros_like(average_grad)
             torch.distributed.scatter(output_tensor, scatter_list=[average_grad for _ in range(world_size)] if rank == 0 else None, 
                                     src=0, group=None, async_op=False)
+            sync_time += time.time() - s_t1
             
             param.grad = output_tensor
         
         optimizer.step()
         
-        # print statistics
-        running_loss += loss.item()
         total_loss += loss.item()
-        if batch_idx % 20 == 19:
-            print("")
-            print(f'[Batch:{batch_idx+1}] avg running loss: \t\t{running_loss/20}')
-            print(f'[Batch:{batch_idx+1}] avg total loss: \t\t {total_loss/(batch_idx+1)}')
-            running_loss = 0.0
+        measure_iters(source="gather-scatter", iter=batch_idx, start_time=t1, 
+                      iter_loss=loss.item(), total_loss=total_loss/(batch_idx+1), 
+                      batch_size=inputs.size(0), sync_time=sync_time)
 
     print('Finished Training')
 
