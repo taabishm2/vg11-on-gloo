@@ -93,9 +93,12 @@ def test_model(model, test_loader, criterion):
             test_loss, correct, len(test_loader.dataset),
             100. * correct / len(test_loader.dataset)))
     
-    for name, param in model.named_parameters():
-        with open(f"data/2a.params", "w") as f:
-            f.write(str({str(name): str(param)}))
+    with open("2a.params", 'w') as f:
+        for name, param in model.named_parameters():
+            f.write(f'Layer: {name}\n')
+            f.write(f'Parameters: {param.size()}\n')
+            f.write(f'Values:\n{param.data.numpy()}\n\n')
+    
     
 
 def parse_args():
