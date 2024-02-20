@@ -53,8 +53,6 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
             sync_time += time.time() - s_t1
             
             param.grad = gradient_sum / world_size
-            
-            print(param.grad)
         
         optimizer.step()
         

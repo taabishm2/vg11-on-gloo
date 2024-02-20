@@ -9,7 +9,7 @@ MEASUREMENTS = defaultdict(list)
 
 def measure_iters(source, iter, start_time, iter_loss, 
                   total_loss, batch_size, sync_time):
-    print("Running iteration: ", iter)
+    # print("Running iteration: ", iter)
     if iter == 0 or iter > 41: return
     
     total_io = psutil.net_io_counters()
