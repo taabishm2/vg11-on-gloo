@@ -73,8 +73,6 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
         measure_iters(source="gather-scatter", iter=batch_idx, start_time=t1, 
                       iter_loss=loss.item(), total_loss=total_loss/(batch_idx+1), 
                       batch_size=inputs.size(0), sync_time=sync_time)
-        
-        if batch_idx > 0: return
 
     print('Finished Training')
 
