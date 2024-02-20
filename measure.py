@@ -37,7 +37,8 @@ def measure_iters(source, iter, start_time, iter_loss,
         print(f"Results saved to results/{source}.csv")
         
 def save_params(file, model):
-    with open(f"data/{file}.params", 'w') as f:
+    file = f"data/{file}.params"
+    with open(file, 'w') as f:
         for name, param in model.named_parameters():
             f.write(f'Layer: {name}\n')
             f.write(f'Parameters: {param.size()}\n')
