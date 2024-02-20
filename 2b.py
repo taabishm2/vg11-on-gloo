@@ -85,7 +85,7 @@ def test_model(model, test_loader, criterion):
             100. * correct / len(test_loader.dataset)))
     
     for name, param in model.named_parameters():
-        with open(f"results/2b.params", "w") as f:
+        with open(f"data/2b.params", "w") as f:
             f.write({str(name): str(param)})
     
 
