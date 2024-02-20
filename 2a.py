@@ -92,6 +92,7 @@ def test_model(model, test_loader, criterion):
     print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
             test_loss, correct, len(test_loader.dataset),
             100. * correct / len(test_loader.dataset)))
+    torch.save(model.state_dict(), "2a-model.pth")
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Example script for parsing command-line arguments.')
