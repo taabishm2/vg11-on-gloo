@@ -77,6 +77,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     return None
 
 def test_model(model, test_loader, criterion):
+    save_params("2a", model)
     model.eval()
     test_loss = 0
     correct = 0
@@ -92,13 +93,6 @@ def test_model(model, test_loader, criterion):
     print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
             test_loss, correct, len(test_loader.dataset),
             100. * correct / len(test_loader.dataset)))
-    
-    with open("2a.params", 'w') as f:
-        for name, param in model.named_parameters():
-            f.write(f'Layer: {name}\n')
-            f.write(f'Parameters: {param.size()}\n')
-            f.write(f'Values:\n{param.data.numpy()}\n\n')
-    
     
 
 def parse_args():

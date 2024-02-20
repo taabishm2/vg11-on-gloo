@@ -1,4 +1,5 @@
 from collections import defaultdict
+import hashlib
 import psutil
 import time
 import csv
@@ -34,3 +35,18 @@ def measure_iters(source, iter, start_time, iter_loss,
     if iter == 41:
         csv.writer(open(f"results/{source}.csv", "w")).writerows(MEASUREMENTS[source])
         print(f"Results saved to results/{source}.csv")
+        
+def save_params(file, model):
+    with open(f"data/{file}.params", 'w') as f:
+        for name, param in model.named_parameters():
+            f.write(f'Layer: {name}\n')
+            f.write(f'Parameters: {param.size()}\n')
+            f.write(f'Values:\n{param.data.numpy()}\n\n')
+    
+    sha256_hash = hashlib.sha256()
+    with open(file, 'rb') as f:
+        # Read and update hash in chunks to avoid loading large files into memory
+        for chunk in iter(lambda: f.read(4096), b""):
+            sha256_hash.update(chunk)
+    
+    print(f"\n\nSHA(params): {sha256_hash.hexdigest()}")
