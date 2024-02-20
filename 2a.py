@@ -27,6 +27,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     """
 
     running_loss = total_loss = 0.0
+    save_params("2a", model)
 
     # remember to exit the train loop at end of the epoch
     for batch_idx, (data, target) in enumerate(train_loader):
@@ -79,7 +80,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     return None
 
 def test_model(model, test_loader, criterion):
-    save_params("2a", model)
+    # save_params("2a", model)
     model.eval()
     test_loss = 0
     correct = 0
