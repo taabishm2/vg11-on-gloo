@@ -15,6 +15,7 @@ from measure import *
 
 device = "cpu"
 torch.set_num_threads(4)
+torch.manual_seed(744)
 
 batch_size = 256 # batch for one node
 def train_model(model, train_loader, optimizer, criterion, epoch):
@@ -26,7 +27,7 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     epoch (int): Current epoch number
     """
 
-    running_loss = total_loss = 0.0
+    total_loss = 0.0
     save_params("2a", model)
 
     # remember to exit the train loop at end of the epoch
@@ -156,7 +157,6 @@ def main():
     
     optimizer = optim.SGD(model.parameters(), lr=0.1,
                           momentum=0.9, weight_decay=0.0001)
-    torch.manual_seed(744)
     
     # Setting up distributed training
     torch.distributed.init_process_group(backend="gloo", init_method=master_ip, 
