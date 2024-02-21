@@ -31,6 +31,9 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
 
     # remember to exit the train loop at end of the epoch
     for batch_idx, (data, target) in enumerate(train_loader):
+        print("Batch:", batch_idx, end=" ")
+        save_params("2b_first.params", model)
+        
         t1 = time.time()
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data, target
