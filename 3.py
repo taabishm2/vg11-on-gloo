@@ -15,6 +15,7 @@ from measure import *
 
 device = "cpu"
 torch.set_num_threads(4)
+torch.manual_seed(744)
 
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -131,7 +132,6 @@ def main():
     
     optimizer = optim.SGD(model.parameters(), lr=0.1,
                           momentum=0.9, weight_decay=0.0001)
-    torch.manual_seed(744)
     
     # Setting up distributed training
     torch.distributed.init_process_group(backend="gloo", init_method=master_ip, 
