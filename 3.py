@@ -82,7 +82,7 @@ def test_model(model, test_loader, criterion):
 def setup_distributed(args):
     # Initialize the process group
     # dist.init_process_group(backend='gloo', init_method="tcp://172.18.0.2:12345,172.18.0.3:12345,172.18.0.4:12345,172.18.0.5:12345", rank=0, world_size=4)
-    dist.init_process_group(backend='gloo', init_method='tcp://' + args.master_ip + ':6585',
+    dist.init_process_group(backend='gloo', init_method=args.master_ip,
                             world_size=args.num_nodes, rank=args.rank)
     global rank, world_size
     rank = args.rank
