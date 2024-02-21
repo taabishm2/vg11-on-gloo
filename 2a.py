@@ -26,6 +26,8 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     criterion (nn.CrossEntropyLoss) : Loss function used to train the network
     epoch (int): Current epoch number
     """
+    save_params("2a_first.params", model)
+    return
 
     total_loss = 0.0
     save_params("2a", model)
