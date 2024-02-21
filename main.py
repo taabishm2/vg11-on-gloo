@@ -26,13 +26,14 @@ def train_model(model, train_loader, optimizer, criterion, epoch):
     criterion (nn.CrossEntropyLoss) : Loss function used to train the network
     epoch (int): Current epoch number
     """
-    save_params("main_first.params", model)
-    return
 
     running_loss = total_loss = 0.0
 
     # remember to exit the train loop at end of the epoch
     for batch_idx, (data, target) in enumerate(train_loader):
+        print("Batch:", batch_idx, end=" ")
+        save_params("main.params", model)
+        
         t1 = time.time()
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data, target

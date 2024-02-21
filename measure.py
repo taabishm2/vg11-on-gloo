@@ -14,7 +14,7 @@ def measure_iters(source, iter, start_time, iter_loss,
         print(f"Results saved to results/{source}.csv")
         return
     
-    print("Running iteration: ", iter)
+    # print("Running iteration: ", iter)
     if iter == 0 or iter > 400: return
     
     total_io = psutil.net_io_counters()
@@ -51,4 +51,4 @@ def save_params(file, model):
         for chunk in iter(lambda: f.read(4096), b""):
             sha256_hash.update(chunk)
     
-    print(f"\n\nSHA(params): {sha256_hash.hexdigest()}")
+    print(f"{sha256_hash.hexdigest()}")
