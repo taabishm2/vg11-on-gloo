@@ -116,7 +116,9 @@ def main():
     
     # running training for one epoch
     for epoch in range(1):
+        tt1 = time.time()
         train_model(model, train_loader, optimizer, training_criterion, epoch)
+        print("**** TOTAL TRAIN TIME: ", time.time()-tt1)
         test_model(model, test_loader, training_criterion)
 
 if __name__ == "__main__":
